@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fivetrue_app_key">com.fivetrue</string>
+    <string name="app_google_api_key">AIzaSyCUlxcdYZPH8NqZTvg9TnaG2Mk6Yiiks-c</string>
+    <string name="app_facebook_id">1793693524204511</string>
+    <string name="facebook">Facebook</string>
+    <string name="google">Google</string>
+</resources>

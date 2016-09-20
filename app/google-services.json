@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "461496352417",
+    "firebase_url": "https://fir-hangoutbaby.firebaseio.com",
+    "project_id": "firebase-hangoutbaby",
+    "storage_bucket": "firebase-hangoutbaby.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461496352417:android:8a7b4812325dd625",
+        "android_client_info": {
+          "package_name": "com.fivetrue.hangoutbaby"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461496352417-vjftbu5j51hk43i7vuj4k11ik288dsjh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fivetrue.hangoutbaby",
+            "certificate_hash": "E0E8ECE135120B14E12D2218FAC90C07BDAFFC4E"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPwLWZHFWFQWI2ums6j5qtFyZr61T7GQI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
