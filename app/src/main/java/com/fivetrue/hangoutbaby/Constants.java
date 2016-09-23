@@ -5,7 +5,11 @@ package com.fivetrue.hangoutbaby;
  */
 public class Constants {
 
-    public static final String API_SERVER_HOST = "http://192.168.219.142:8080/HangoutBaby";
+    /**
+     * AWS Server
+     */
+    public static final String API_SERVER_HOST = "http://52.78.61.23/HangoutBaby";
+//    public static final String API_SERVER_HOST = "http://192.168.219.142:8080/HangoutBaby";
 //    public static final String API_SERVER_HOST = "http://192.168.219.142:8080/HangoutBaby";
 //    public static final String API_SERVER_HOST = "http://localhost:8080/HangoutBaby";
 

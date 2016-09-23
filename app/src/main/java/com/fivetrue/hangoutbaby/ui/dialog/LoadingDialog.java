@@ -17,22 +17,16 @@ public class LoadingDialog extends ProgressDialog{
         super(context, theme);
     }
 
-    public static LoadingDialog create(Context context){
-        LoadingDialog dialog = new LoadingDialog(context);
-        dialog.setProgressStyle(STYLE_SPINNER);
-        dialog.getWindow().setDimAmount(0);
-        dialog.getWindow().setBackgroundDrawable(context.getResources().getDrawable(android.R.color.transparent));
-        dialog.setTitle(null);
-        dialog.setMessage(null);
-        dialog.setIndeterminate(false);
-        dialog.setCancelable(false);
-        dialog.setCanceledOnTouchOutside(false);
-        return dialog;
-    }
-
     @Override
     public void show() {
         super.show();
+        getWindow().setDimAmount(0);
+        getWindow().setBackgroundDrawable(getContext().getResources().getDrawable(android.R.color.transparent));
+        setTitle(null);
+        setMessage(null);
+        setIndeterminate(false);
+        setCancelable(false);
+        setCanceledOnTouchOutside(false);
         setContentView(R.layout.dialog_loading);
     }
 }

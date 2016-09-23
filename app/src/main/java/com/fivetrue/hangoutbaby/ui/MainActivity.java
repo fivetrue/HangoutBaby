@@ -2,72 +2,67 @@ package com.fivetrue.hangoutbaby.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.NetworkImageView;
 import com.fivetrue.hangoutbaby.R;
-import com.fivetrue.hangoutbaby.helper.LoginHelper;
 import com.fivetrue.hangoutbaby.image.ImageLoadManager;
-import com.fivetrue.hangoutbaby.preferences.ConfigPreferenceManager;
+import com.fivetrue.hangoutbaby.net.BaseApiResponse;
+import com.fivetrue.hangoutbaby.net.NetworkManager;
+import com.fivetrue.hangoutbaby.net.request.place.GetPlaceRequest;
+import com.fivetrue.hangoutbaby.vo.PlaceItem;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks
-        , GoogleApiClient.OnConnectionFailedListener{
+import java.util.List;
+
+public class MainActivity extends BasePlaceActivity
+        implements NavigationView.OnNavigationItemSelectedListener{
 
     private static final String TAG = "MainActivity";
 
-    private static final int REQUEST_PLACE_PICKER = 0x00;
 
     private NetworkImageView mNavImage = null;
     private TextView mNavName = null;
     private TextView mNavAccount = null;
     private DrawerLayout mDrawerLayout = null;
 
-    private LoginHelper mLoginHelper = null;
+    private ViewGroup mLayoutBanner = null;
+    private RecyclerView mRecyclerRecentlyPlace = null;
 
-    private GoogleApiClient mGoogleApiClient = null;
+    private FloatingActionButton mRegisterdPlaceButton = null;
+
+    private GetPlaceRequest mGetPlaceRequest = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initData();
+        initNavigation();
         initView();
+
+        NetworkManager.getInstance().request(mGetPlaceRequest);
     }
 
     private void initData(){
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Places.GEO_DATA_API)
-                .addApi(Places.PLACE_DETECTION_API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-
-        mLoginHelper = new LoginHelper(this);
+        mGetPlaceRequest = new GetPlaceRequest(this, onResponseListener);
     }
 
-    private void initView(){
+    private void initNavigation(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -83,39 +78,21 @@ public class MainActivity extends AppCompatActivity
         mNavAccount = (TextView) headerView.findViewById(R.id.tv_nav_header_name_account);
         mNavName = (TextView) headerView.findViewById(R.id.tv_nav_header_name);
 
-        mNavImage.setImageUrl(mLoginHelper.getUser().getPhotoUrl().toString(), ImageLoadManager.getImageLoader());
-        mNavAccount.setText(mLoginHelper.getUser().getEmail());
-        mNavName.setText(mLoginHelper.getUser().getDisplayName());
+        mNavImage.setImageUrl(getLoginHelper().getUser().getPhotoUrl().toString(), ImageLoadManager.getImageLoader());
+        mNavAccount.setText(getLoginHelper().getUser().getEmail());
+        mNavName.setText(getLoginHelper().getUser().getDisplayName());
     }
 
-    protected void pickPlaceData(){
-        try {
-            PlacePicker.IntentBuilder intentBuilder =
-                    new PlacePicker.IntentBuilder();
-            Intent intent = intentBuilder.build(MainActivity.this);
-            // Start the intent by requesting a result,
-            // identified by a request code.
-            startActivityForResult(intent, REQUEST_PLACE_PICKER);
+    private void initView(){
+        mRecyclerRecentlyPlace = (RecyclerView) findViewById(R.id.rv_main_recently_registered_place);
+        mRegisterdPlaceButton = (FloatingActionButton) findViewById(R.id.fab_register_place);
 
-        } catch (GooglePlayServicesRepairableException e) {
-            // ...
-            e.printStackTrace();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            // ...
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mGoogleApiClient.disconnect();
+        mRegisterdPlaceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pickPlaceData();
+            }
+        });
     }
 
     @Override
@@ -179,7 +156,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_logout) {
-            mLoginHelper.logout();
+            getLoginHelper().logout();
             Intent intent = new Intent(this, SplashActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -190,23 +167,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_PLACE_PICKER
-                && resultCode == RESULT_OK) {
-            Place place = PlacePicker.getPlace(this, data);
-            Status status = PlacePicker.getStatus(this, data);
-            LatLngBounds latLngBounds = PlacePicker.getLatLngBounds(data);
-            onPickedPlaceData(place, status, latLngBounds.getCenter());
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    private void onPickedPlaceData(Place place, Status status, LatLng latLng){
-
-    }
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -223,4 +183,36 @@ public class MainActivity extends AppCompatActivity
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed() called with: " + "connectionResult = [" + connectionResult + "]");
     }
+
+    @Override
+    protected int getFragmentAnchorLayoutID() {
+        return R.id.layout_main_content;
+    }
+
+    @Override
+    protected void onPickedPlaceItem(PlaceItem placeItem, Place place) {
+        super.onPickedPlaceItem(placeItem, place);
+        Intent intent = new Intent(this, PlaceEditActivity.class);
+        intent.putExtra(PlaceItem.class.getName(), placeItem);
+        startActivity(intent);
+    }
+
+    private void setPlaceList(List<PlaceItem> placeList){
+
+    }
+
+    private BaseApiResponse.OnResponseListener<List<PlaceItem>> onResponseListener = new BaseApiResponse.OnResponseListener<List<PlaceItem>>() {
+        @Override
+        public void onResponse(BaseApiResponse<List<PlaceItem>> response) {
+            if(response != null && response.getData() != null){
+                setPlaceList(response.getData());
+            }
+        }
+
+        @Override
+        public void onError(VolleyError error) {
+
+        }
+    };
+
 }

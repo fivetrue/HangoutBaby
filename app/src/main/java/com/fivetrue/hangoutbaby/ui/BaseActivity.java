@@ -1,6 +1,7 @@
 package com.fivetrue.hangoutbaby.ui;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RelativeLayout;
 
+import com.fivetrue.hangoutbaby.ui.dialog.LoadingDialog;
 import com.fivetrue.hangoutbaby.ui.fragment.BaseFragment;
+import com.fivetrue.hangoutbaby.ui.fragment.BaseFragmentImp;
 
 
 /**
@@ -19,6 +22,8 @@ import com.fivetrue.hangoutbaby.ui.fragment.BaseFragment;
 abstract public class BaseActivity extends AppCompatActivity {
 
     private static final String TAG = "BaseActivity";
+
+    private LoadingDialog mLoadingDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,18 +36,18 @@ abstract public class BaseActivity extends AppCompatActivity {
         return b;
     }
 
-    public BaseFragment addFragment(Class< ? extends BaseFragment> cls, Bundle arguments, int anchorLayout, boolean addBackstack){
+    public Fragment addFragment(Class< ? extends BaseFragmentImp> cls, Bundle arguments, int anchorLayout, boolean addBackstack){
         return addFragment(cls, arguments, anchorLayout, 0, 0, addBackstack);
     }
 
-    public BaseFragment addFragment(Class< ? extends BaseFragment> cls, Bundle arguments, boolean addBackstack){
+    public Fragment addFragment(Class< ? extends BaseFragmentImp> cls, Bundle arguments, boolean addBackstack){
         return addFragment(cls, arguments, getFragmentAnchorLayoutID(), 0, 0, addBackstack);
     }
 
-    public BaseFragment addFragment(Class< ? extends BaseFragment> cls, Bundle arguments, int anchorLayout, int enterAnim, int exitAnim, boolean addBackstack){
-        BaseFragment f = null;
+    public Fragment addFragment(Class< ? extends BaseFragmentImp> cls, Bundle arguments, int anchorLayout, int enterAnim, int exitAnim, boolean addBackstack){
+        Fragment f = null;
         try {
-            f = cls.newInstance();
+            f = (Fragment) cls.newInstance();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -54,10 +59,10 @@ abstract public class BaseActivity extends AppCompatActivity {
             }
             FragmentTransaction ft = getCurrentFragmentManager().beginTransaction();
             ft.setCustomAnimations(enterAnim, exitAnim, enterAnim, exitAnim)
-                    .replace(anchorLayout, f, f.getFragmentTag());
+                    .replace(anchorLayout, f, ((BaseFragmentImp) f).getFragmentTag());
             if(addBackstack){
-                ft.addToBackStack(f.getFragmentTag());
-                ft.setBreadCrumbTitle(f.getFragmentNameResource());
+                ft.addToBackStack(((BaseFragmentImp) f).getFragmentTag());
+                ft.setBreadCrumbTitle(((BaseFragmentImp) f).getFragmentNameResource());
             }
             ft.commitAllowingStateLoss();
         }
@@ -104,6 +109,21 @@ abstract public class BaseActivity extends AppCompatActivity {
 
     protected boolean usingParentLayoutStyle(){
         return true;
+    }
+
+    protected void showLoadingDialog(){
+        if(mLoadingDialog == null){
+            mLoadingDialog = new LoadingDialog(this);
+        }
+        if(!mLoadingDialog.isShowing()){
+            mLoadingDialog.show();
+        }
+    }
+
+    protected void dismissLoadingDialog(){
+        if(mLoadingDialog != null && mLoadingDialog.isShowing()){
+            mLoadingDialog.dismiss();
+        }
     }
 }
 

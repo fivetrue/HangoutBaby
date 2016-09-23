@@ -14,7 +14,7 @@ public class SimpleViewUtils {
 
     private static final String TAG = "SimpleViewUtils";
 
-    public static void showView(View view){
+    public static void showView(View view, final int visibility){
         if(view != null && view.getParent() != null){
             if(!view.isShown()){
                 try{
@@ -25,22 +25,22 @@ public class SimpleViewUtils {
                                 0,
                                 view.getWidth());
                         animator.start();
-                        view.setVisibility(View.VISIBLE);
+                        view.setVisibility(visibility);
                     } else {
                         AlphaAnimation anim = new AlphaAnimation(0, 1);
                         anim.setDuration(300L);
                         view.setAnimation(anim);
-                        view.setVisibility(View.VISIBLE);
+                        view.setVisibility(visibility);
                     }
                 }catch (Exception e){
                     Log.e(TAG, "showView() error : " + e);
-                    view.setVisibility(View.VISIBLE);
+                    view.setVisibility(visibility);
                 }
             }
         }
     }
 
-    public static void hideView(final View view){
+    public static void hideView(final View view, final int visibility){
         if(view != null){
             if(view.isShown()){
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
@@ -57,7 +57,7 @@ public class SimpleViewUtils {
 
                         @Override
                         public void onAnimationEnd(Animator animation) {
-                            view.setVisibility(View.GONE);
+                            view.setVisibility(visibility);
                         }
 
                         @Override
@@ -75,10 +75,10 @@ public class SimpleViewUtils {
                     AlphaAnimation anim = new AlphaAnimation(1, 0);
                     anim.setDuration(300L);
                     view.setAnimation(anim);
-                    view.setVisibility(View.GONE);
+                    view.setVisibility(visibility);
                 }
             }else{
-                view.setVisibility(View.GONE);
+                view.setVisibility(visibility);
             }
         }
     }

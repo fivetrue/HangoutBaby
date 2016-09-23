@@ -7,6 +7,16 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:typeface">sans</item>
+        <item name="preferenceTheme">@style/SettingPreferenceStyle</item>
+    </style>
+
+    <style name="AppTheme.Place">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="SettingPreferenceStyle" parent="PreferenceThemeOverlay">
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -37,6 +47,14 @@
 
     <style name="CommonText.Medium">
         <item name="android:textSize">17dp</item>
+    </style>
+
+    <style name="CollpaseCollapsingToolbar" parent="CommonText.Medium">
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+    <style name="ExpendCollapsingToolbar" parent="CommonText.Large">
+        <item name="android:textColor">@color/colorPrimaryDark</item>
     </style>
 
 </resources>

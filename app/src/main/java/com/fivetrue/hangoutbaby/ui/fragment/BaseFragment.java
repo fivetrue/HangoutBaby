@@ -8,14 +8,13 @@ import android.widget.Toast;
 /**
  * Created by kwonojin on 16. 3. 18..
  */
-public class BaseFragment extends Fragment {
+public class BaseFragment extends Fragment implements BaseFragmentImp{
 
     protected void showToast(String msg) {
         if (getActivity() != null) {
             Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
         }
     }
-
 
     public String getFragmentTag(){
         return getClass().getSimpleName();
@@ -25,7 +24,8 @@ public class BaseFragment extends Fragment {
         return getClass().getSimpleName();
     }
 
-    public String getBackstackName(){
+    @Override
+    public String getFragmentBackStackName() {
         return getClass().getName();
     }
 
@@ -49,7 +49,7 @@ public class BaseFragment extends Fragment {
                 f.setArguments(bundle);
             }
             if(addBackStack){
-                ft.addToBackStack(f.getBackstackName());
+                ft.addToBackStack(f.getFragmentBackStackName());
             }
             ft.setBreadCrumbTitle(f.getFragmentTitle())
                     .replace(getChildFragmentAnchorId(), f, f.getFragmentTag())
@@ -58,10 +58,12 @@ public class BaseFragment extends Fragment {
         }
     }
 
-    protected int getChildFragmentAnchorId(){
+    @Override
+    public int getChildFragmentAnchorId(){
         return getView().getId();
     }
 
+    @Override
     public int getFragmentNameResource(){
         return 0;
     }

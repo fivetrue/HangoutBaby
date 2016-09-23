@@ -5,13 +5,34 @@ package com.fivetrue.hangoutbaby.vo;
  */
 public class AppConfig {
 
+    private int configId = 0;
+
+    private int appVersionCode = 0;
     private String appId = null;
     private String appSercureKey = null;
-    private String appLatestVersion = null;
     private String appVersionName = null;
     private String appMarketUrl = null;
     private String senderId = null;
 
+    private int forceUpdate = 0;
+
+    private String adminUrl = null;
+
+    public int getConfigId() {
+        return configId;
+    }
+
+    public void setConfigId(int configId) {
+        this.configId = configId;
+    }
+
+    public int getAppVersionCode() {
+        return appVersionCode;
+    }
+
+    public void setAppVersionCode(int appVersionCode) {
+        this.appVersionCode = appVersionCode;
+    }
 
     public String getAppId() {
         return appId;
@@ -27,14 +48,6 @@ public class AppConfig {
 
     public void setAppSercureKey(String appSercureKey) {
         this.appSercureKey = appSercureKey;
-    }
-
-    public String getAppLatestVersion() {
-        return appLatestVersion;
-    }
-
-    public void setAppLatestVersion(String appLatestVersion) {
-        this.appLatestVersion = appLatestVersion;
     }
 
     public String getAppVersionName() {
@@ -61,15 +74,34 @@ public class AppConfig {
         this.senderId = senderId;
     }
 
+    public int getForceUpdate() {
+        return forceUpdate;
+    }
+
+    public void setForceUpdate(int forceUpdate) {
+        this.forceUpdate = forceUpdate;
+    }
+
+    public String getAdminUrl() {
+        return adminUrl;
+    }
+
+    public void setAdminUrl(String adminUrl) {
+        this.adminUrl = adminUrl;
+    }
+
     @Override
     public String toString() {
         return "AppConfig{" +
-                "appId='" + appId + '\'' +
+                "configId=" + configId +
+                ", appVersionCode=" + appVersionCode +
+                ", appId='" + appId + '\'' +
                 ", appSercureKey='" + appSercureKey + '\'' +
-                ", appLatestVersion='" + appLatestVersion + '\'' +
                 ", appVersionName='" + appVersionName + '\'' +
                 ", appMarketUrl='" + appMarketUrl + '\'' +
                 ", senderId='" + senderId + '\'' +
+                ", forceUpdate=" + forceUpdate +
+                ", adminUrl='" + adminUrl + '\'' +
                 '}';
     }
 }

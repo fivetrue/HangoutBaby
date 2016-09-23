@@ -21,6 +21,7 @@ import com.fivetrue.hangoutbaby.net.NetworkManager;
 import com.fivetrue.hangoutbaby.net.request.AddUserRequest;
 import com.fivetrue.hangoutbaby.net.request.LoginUserRequest;
 import com.fivetrue.hangoutbaby.preferences.ConfigPreferenceManager;
+import com.fivetrue.hangoutbaby.vo.AppConfig;
 import com.fivetrue.hangoutbaby.vo.User;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -43,7 +44,10 @@ import java.util.Arrays;
 /**
  * Created by kwonojin on 16. 9. 19..
  */
-public class LoginHelper implements FirebaseAuth.AuthStateListener, FacebookCallback<LoginResult> {
+public class UserInfoHelper implements FirebaseAuth.AuthStateListener, FacebookCallback<LoginResult> {
+
+    private static final String TAG = "UserInfoHelper";
+
 
     public enum LoginType{
         Normal, Google, Kakao, Facebook
@@ -62,7 +66,6 @@ public class LoginHelper implements FirebaseAuth.AuthStateListener, FacebookCall
         void onUpdateFailed(Exception e);
     }
 
-    private static final String TAG = "LoginHelper";
 
 
     private static final int REQUEST_GOOGLE_ACCOUNT_LOGIN = 0x44;
@@ -92,7 +95,7 @@ public class LoginHelper implements FirebaseAuth.AuthStateListener, FacebookCall
 
     private FirebaseAuth mAuth = null;
 
-    public LoginHelper(FragmentActivity activity){
+    public UserInfoHelper(FragmentActivity activity){
         mActivity = activity;
         mConfigPref = new ConfigPreferenceManager(mActivity);
         mAddUserRequest = new AddUserRequest(mActivity, addUserApiResponse);
@@ -238,6 +241,14 @@ public class LoginHelper implements FirebaseAuth.AuthStateListener, FacebookCall
 
     public String getGcmID(){
         return mConfigPref.getGcmDeviceId();
+    }
+
+    public AppConfig getAppConfig(){
+        return mConfigPref.getAppConfig();
+    }
+
+    public void setAppConfig(AppConfig appConfig){
+        mConfigPref.setAppConfig(appConfig);
     }
 
     public void updateUser(String name, String imageUrl, final OnUserInfoUpdateListener ll){
@@ -405,5 +416,9 @@ public class LoginHelper implements FirebaseAuth.AuthStateListener, FacebookCall
     @Override
     public void onError(FacebookException error) {
         mOnAccountManagerListener.onUserAddError(error);
+    }
+
+    public ConfigPreferenceManager getConfigPref(){
+        return mConfigPref;
     }
 }

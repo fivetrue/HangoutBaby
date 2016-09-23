@@ -4,4 +4,17 @@
     <color name="colorPrimary">#f7c310</color>
     <color name="colorPrimaryDark">#c79b02</color>
     <color name="colorAccent">#FFFFFF</color>
+
+    <color name="color_primary_alpha_10">#19CC3D3D</color>
+    <color name="color_primary_alpha_30">#4CCC3D3D</color>
+
+    <color name="colorNegative">#FFA900</color>
+    <color name="colorNegativeDark">#D48C00</color>
+    <color name="color_negative_alpha_10">#19FFA900</color>
+    <color name="color_negative_alpha_30">#4CFFA900</color>
+
+    <color name="color_black_alpha_10">#19000000</color>
+    <color name="color_black_alpha_30">#4C000000</color>
+    <color name="color_white_alpha_10">#19ffffff</color>
+    <color name="color_white_alpha_30">#4Cffffff</color>
 </resources>

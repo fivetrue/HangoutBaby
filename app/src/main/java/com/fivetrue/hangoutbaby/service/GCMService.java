@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.fivetrue.hangoutbaby.preferences.ConfigPreferenceManager;
+import com.fivetrue.hangoutbaby.preferences.SettingPreferenceHelper;
 import com.fivetrue.hangoutbaby.service.notification.NotificationData;
 import com.fivetrue.hangoutbaby.service.notification.NotificationService;
 import com.fivetrue.hangoutbaby.ui.SplashActivity;
@@ -19,17 +20,11 @@ public class GCMService extends GcmListenerService {
     private static final String TAG = "GCMService";
     private static final String DATA_KEY = "data";
 
-    private ConfigPreferenceManager mConfigPref = null;
-
     @Override
     public void onMessageReceived(String from, Bundle data) {
         super.onMessageReceived(from, data);
-        if(mConfigPref == null){
-            mConfigPref = new ConfigPreferenceManager(this);
-        }
-
         String message = data.getString(DATA_KEY);
-        if(message != null && mConfigPref.isSettingPush()){
+        if(message != null && SettingPreferenceHelper.getInstance(this).isPushSetting()){
             NotificationData noti = new Gson().fromJson(message, NotificationData.class);
             if(noti.getId() <= 0){
                 noti.setId(DEFAULT_NOTIFICATION_ID);

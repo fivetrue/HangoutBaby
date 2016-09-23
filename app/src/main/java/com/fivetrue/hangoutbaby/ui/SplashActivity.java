@@ -20,10 +20,11 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.fivetrue.hangoutbaby.R;
-import com.fivetrue.hangoutbaby.helper.LoginHelper;
+import com.fivetrue.hangoutbaby.helper.UserInfoHelper;
 import com.fivetrue.hangoutbaby.net.BaseApiResponse;
 import com.fivetrue.hangoutbaby.net.NetworkManager;
 import com.fivetrue.hangoutbaby.net.request.AppConfigRequest;
+import com.fivetrue.hangoutbaby.utils.AppUtils;
 import com.fivetrue.hangoutbaby.vo.AppConfig;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -49,7 +50,7 @@ public class SplashActivity extends BaseActivity{
             "cardcapture",
     };
 
-    private LoginHelper mLoginManager = null;
+    private UserInfoHelper mLoginManager = null;
     private AppConfigRequest mAppConfigRequest = null;
 
     private TextView mTitleText = null;
@@ -77,7 +78,7 @@ public class SplashActivity extends BaseActivity{
 
     private void initData(){
         mAppConfigRequest = new AppConfigRequest(this, appConfigOnResponseListener);
-        mLoginManager = new LoginHelper(this);
+        mLoginManager = new UserInfoHelper(this);
     }
 
     private void initView(){
@@ -219,6 +220,35 @@ public class SplashActivity extends BaseActivity{
     }
 
     private void startApplication(){
+        final AppConfig appConfig = mLoginManager.getAppConfig();
+        if(appConfig != null){
+            if(AppUtils.getApplicationVersionCode(this) < appConfig.getAppVersionCode() && appConfig.getForceUpdate() > 0){
+                new android.app.AlertDialog.Builder(SplashActivity.this)
+                        .setTitle(R.string.notice)
+                        .setMessage(R.string.config_force_update)
+                        .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                AppUtils.goAppStore(SplashActivity.this, appConfig.getAppMarketUrl());
+                                finish();
+                            }
+                        }).create().show();
+                return;
+            }
+        }
+
         if(mLoginManager.getUser() != null){
             checkIntent(getIntent());
         }
@@ -227,6 +257,7 @@ public class SplashActivity extends BaseActivity{
     private void onAppConfig(final AppConfig appConfig){
         Log.d(TAG, "onAppConfig() called with: " + "appConfig = [" + appConfig + "]");
         if(appConfig != null){
+            mLoginManager.setAppConfig(appConfig);
             String regId = mLoginManager.getGcmID();
             if(regId == null){
                 new AsyncTask<String, Void, String>() {

@@ -1,6 +1,7 @@
 package com.fivetrue.hangoutbaby.image;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -9,6 +10,8 @@ import com.android.volley.toolbox.ImageLoader;
  * Created by kwonojin on 16. 3. 30..
  */
 public class ImageLoadManager {
+
+    private static final String TAG = "ImageLoadManager";
 
     private RequestQueue mRequestQueue = null;
     private LruBitmapCache mBitmapCache = null;
@@ -29,6 +32,7 @@ public class ImageLoadManager {
 
     public void loadImageUrl(String url , ImageLoader.ImageListener ll){
         if(url != null && ll != null){
+            Log.d(TAG, "loadImageUrl() called with: " + "url = [" + url + "], ll = [" + ll + "]");
             mImageLoader.get(url, ll);
         }
     }

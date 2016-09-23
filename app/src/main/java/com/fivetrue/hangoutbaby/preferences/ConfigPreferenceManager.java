@@ -3,7 +3,9 @@ package com.fivetrue.hangoutbaby.preferences;
 import android.content.Context;
 import android.net.Uri;
 
+import com.fivetrue.hangoutbaby.vo.AppConfig;
 import com.fivetrue.hangoutbaby.vo.User;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.firebase.auth.UserInfo;
 import com.google.gson.Gson;
 
@@ -12,14 +14,13 @@ import com.google.gson.Gson;
  */
 public class ConfigPreferenceManager {
 
-    private static final String PREF_NAME = "config";
+    public static final String PREF_NAME = "config";
 
     private static final String USER_INFO = "user";
-
+    private static final String APP_CONFIG = "app_config";
     private static final String GCM_DEVICE = "gcm_dvice_id";
-
     private static final String FIRST_OPEN = "first_open";
-    private static final String PUSH_SETTING = "push_setting";
+    private static final String LAST_LOCATION_BOUNDS = "last_location_bounds";
 
     private SharedPreferenceHelper mHelper = null;
 
@@ -56,14 +57,6 @@ public class ConfigPreferenceManager {
         return user;
     }
 
-    public void setPushSetting(boolean b){
-        mHelper.putData(PUSH_SETTING, b);
-    }
-
-    public boolean isSettingPush(){
-        return mHelper.getData(PUSH_SETTING, true);
-    }
-
     public void setGcmDeviceId(String id){
         if(id != null){
             mHelper.putData(GCM_DEVICE, id);
@@ -72,6 +65,38 @@ public class ConfigPreferenceManager {
 
     public String getGcmDeviceId(){
         return mHelper.getData(GCM_DEVICE, null);
+    }
+
+    public void setAppConfig(AppConfig config){
+        if(config == null){
+            mHelper.putData(APP_CONFIG, null);
+        }else{
+            mHelper.putData(APP_CONFIG, mGson.toJson(config));
+        }
+    }
+
+    public AppConfig getAppConfig(){
+        AppConfig config = null;
+        if(mHelper.getData(APP_CONFIG, null) != null){
+            config = mGson.fromJson(mHelper.getData(APP_CONFIG, null), AppConfig.class);
+        }
+        return config;
+    }
+
+    public void setLastPlaceLatLngBounds(LatLngBounds bounds){
+        if(bounds == null){
+            mHelper.putData(LAST_LOCATION_BOUNDS, null);
+        }else{
+            mHelper.putData(LAST_LOCATION_BOUNDS, mGson.toJson(bounds));
+        }
+    }
+
+    public LatLngBounds getLastPlaceLatLngBounds(){
+        LatLngBounds latLngBounds = null;
+        if(mHelper.getData(LAST_LOCATION_BOUNDS, null) != null){
+            latLngBounds = mGson.fromJson(mHelper.getData(LAST_LOCATION_BOUNDS, null), LatLngBounds.class);
+        }
+        return latLngBounds;
     }
 
 }

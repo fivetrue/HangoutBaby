@@ -15,21 +15,21 @@ import android.widget.Toast;
 import com.fivetrue.hangoutbaby.R;
 import com.fivetrue.hangoutbaby.google.GoogleStorageManager;
 import com.fivetrue.hangoutbaby.helper.ImageCroppingHelper;
-import com.fivetrue.hangoutbaby.helper.LoginHelper;
+import com.fivetrue.hangoutbaby.helper.UserInfoHelper;
 import com.fivetrue.hangoutbaby.ui.dialog.LoadingDialog;
 import com.fivetrue.hangoutbaby.vo.User;
 
 /**
  * Created by kwonojin on 16. 9. 18..
  */
-public class LoginActivity extends BaseActivity implements LoginHelper.OnAccountManagerListener{
+public class LoginActivity extends BaseActivity implements UserInfoHelper.OnAccountManagerListener{
 
     private static final String TAG = "LoginActivity";
 
     private Button mLoginGoogle = null;
     private Button mLoginFacebook = null;
 
-    private LoginHelper mLoginHelper = null;
+    private UserInfoHelper mUserInfoHelper = null;
     private ImageCroppingHelper mImageCroppingHelper = null;
 
     private LoadingDialog mLoadingDialog = null;
@@ -45,22 +45,22 @@ public class LoginActivity extends BaseActivity implements LoginHelper.OnAccount
     @Override
     protected void onStart() {
         super.onStart();
-        mLoginHelper.onStart();
+        mUserInfoHelper.onStart();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mLoginHelper.onStop();
+        mUserInfoHelper.onStop();
     }
 
     private void initData(){
-        mLoginHelper = new LoginHelper(this);
+        mUserInfoHelper = new UserInfoHelper(this);
         mImageCroppingHelper = new ImageCroppingHelper(this);
     }
 
     private void initView(){
-        mLoadingDialog = LoadingDialog.create(this);
+        mLoadingDialog = new LoadingDialog(this);
         mLoginGoogle = (Button) findViewById(R.id.btn_login_google);
         mLoginFacebook  = (Button) findViewById(R.id.btn_login_facebook);
 
@@ -68,7 +68,7 @@ public class LoginActivity extends BaseActivity implements LoginHelper.OnAccount
             @Override
             public void onClick(View v) {
                 mLoadingDialog.show();
-                mLoginHelper.loginGoogleAccount();
+                mUserInfoHelper.loginGoogleAccount();
             }
         });
 
@@ -76,7 +76,7 @@ public class LoginActivity extends BaseActivity implements LoginHelper.OnAccount
             @Override
             public void onClick(View v) {
                 mLoadingDialog.show();
-                mLoginHelper.loginFacebook();
+                mUserInfoHelper.loginFacebook();
             }
         });
     }
@@ -84,12 +84,12 @@ public class LoginActivity extends BaseActivity implements LoginHelper.OnAccount
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mLoginHelper.onActivityResult(requestCode, resultCode, data);
+        mUserInfoHelper.onActivityResult(requestCode, resultCode, data);
     }
 
 
     @Override
-    public void onUserLoginSuccess(LoginHelper.LoginType type, User user) {
+    public void onUserLoginSuccess(UserInfoHelper.LoginType type, User user) {
         if(user != null){
             if(user.getState() == 0){
                 setResult(RESULT_OK);
@@ -101,7 +101,7 @@ public class LoginActivity extends BaseActivity implements LoginHelper.OnAccount
     }
 
     @Override
-    public void onUserAddSuccess(LoginHelper.LoginType type, final User user) {
+    public void onUserAddSuccess(UserInfoHelper.LoginType type, final User user) {
         if(user != null){
             if(user.getState() == 0){
                 if(TextUtils.isEmpty(user.getUserImageUrl()) || user.getUserImageUrl().equalsIgnoreCase("null")){
@@ -118,7 +118,7 @@ public class LoginActivity extends BaseActivity implements LoginHelper.OnAccount
                                                 @Override
                                                 public void onUploadSuccess(Uri url) {
                                                     Log.d(TAG, "onUploadSuccess() called with: " + "url = [" + url + "]");
-                                                    mLoginHelper.updateUser(user.getUserId(), url.toString(), new LoginHelper.OnUserInfoUpdateListener() {
+                                                    mUserInfoHelper.updateUser(user.getUserId(), url.toString(), new UserInfoHelper.OnUserInfoUpdateListener() {
                                                         @Override
                                                         public void onUpdateUserInfo(User user) {
                                                             mLoadingDialog.dismiss();
@@ -136,7 +136,7 @@ public class LoginActivity extends BaseActivity implements LoginHelper.OnAccount
                                                     Log.d(TAG, "onUploadFailed() called with: " + "e = [" + e + "]");
                                                     mLoadingDialog.dismiss();
                                                     Toast.makeText(LoginActivity.this, R.string.failed_upload_profile_image, Toast.LENGTH_SHORT).show();
-                                                    mLoginHelper.loginUser(user.getUserUid(), user.getUserId(), user.getUserImageUrl());
+                                                    mUserInfoHelper.loginUser(user.getUserUid(), user.getUserId(), user.getUserImageUrl());
                                                 }
                                             });
                                         }
@@ -152,12 +152,12 @@ public class LoginActivity extends BaseActivity implements LoginHelper.OnAccount
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            mLoginHelper.loginUser(user.getUserUid(), user.getUserId(), user.getUserImageUrl());
+                            mUserInfoHelper.loginUser(user.getUserUid(), user.getUserId(), user.getUserImageUrl());
                         }
                     }).setCancelable(false)
                             .show();
                 }else{
-                    mLoginHelper.loginUser(user.getUserUid(), user.getUserId(), user.getUserImageUrl());
+                    mUserInfoHelper.loginUser(user.getUserUid(), user.getUserId(), user.getUserImageUrl());
                 }
             }else{
                 Toast.makeText(LoginActivity.this, R.string.can_not_use_account, Toast.LENGTH_SHORT).show();

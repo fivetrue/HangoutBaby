@@ -39,6 +39,26 @@
             android:screenOrientation="portrait"
             ></activity>
 
+        <activity android:name=".ui.PlaceEditActivity"
+            android:configChanges="orientation|locale"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Place"
+            ></activity>
+
+        <activity android:name=".ui.PlaceImageGalleryActivity"
+            android:configChanges="orientation|locale"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Place"
+            ></activity>
+
+
+        <activity android:name=".ui.ImageDetailActivity"
+            android:configChanges="orientation|locale"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Place"
+            ></activity>
+
+
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
